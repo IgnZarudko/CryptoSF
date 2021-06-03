@@ -37,8 +37,10 @@ $RECYCLE.BIN/
 # Local environment variables
 .env
 
-#VS Code stuff
+# VS Code stuff
 .vscode/
+
+# Additionally ignored SFDX files and directories
 scripts/
 config/
 .eslintignore
