@@ -45,5 +45,5 @@ config/
 .forceignore
 .prettierignore
 .prettierrc
-.jest.config.js
+jest.config.js
 package.json
