@@ -36,3 +36,14 @@ $RECYCLE.BIN/
 
 # Local environment variables
 .env
+
+#VS Code stuff
+.vscode/
+scripts/
+config/
+.eslintignore
+.forceignore
+.prettierignore
+.prettierrc
+.jest.config.js
+package.json
