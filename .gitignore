@@ -40,3 +40,9 @@ $RECYCLE.BIN/
 #VS Code stuff
 .vscode/
 scripts/
+.eslintignore
+.forceignore
+.prettierignore
+.prettierrc
+.jest.config.js
+package.json
