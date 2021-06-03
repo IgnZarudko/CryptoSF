@@ -36,3 +36,7 @@ $RECYCLE.BIN/
 
 # Local environment variables
 .env
+
+#VS Code stuff
+.vscode/
+scripts/
