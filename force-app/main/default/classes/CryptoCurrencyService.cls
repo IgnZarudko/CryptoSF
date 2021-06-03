@@ -24,8 +24,6 @@ public with sharing class CryptoCurrencyService {
         req.setHeader('Accept', 'application/json');
 
         HttpResponse res = new Http().send(req);
-
-        System.debug(res);
         System.debug('Response: ' + res.getStatusCode());
         System.debug('Body: ' + res.getBody());
 
