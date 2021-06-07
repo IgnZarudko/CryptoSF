@@ -10,4 +10,9 @@ public with sharing class CryptoCurrenciesSelector extends fflib_SObjectSelector
             CryptoCurrency__c.Id
         };
     }
+
+    public List<CryptoCurrency__c> selectById(Set<Id> idSet) {
+        return (List<CryptoCurrency__c>) selectSObjectsById(idSet);
+    }
+    
 }
