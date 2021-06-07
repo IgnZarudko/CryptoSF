@@ -8,6 +8,6 @@ public with sharing class CryptoCurrenciesSelector extends fflib_SObjectSelector
             CryptoCurrency__c.Symbol__c,
             CryptoCurrency__c.Name,
             CryptoCurrency__c.Id
-        }
+        };
     }
 }
