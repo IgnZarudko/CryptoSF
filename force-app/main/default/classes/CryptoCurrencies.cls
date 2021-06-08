@@ -8,12 +8,20 @@ public with sharing class CryptoCurrencies extends fflib_SObjectDomain {
         checkAlreadyExistBySymbol();
     }
 
+    public override void onAfterInsert() {
+        //Make a callout and update
+        //If symbol was not found, add error
+        CryptoCurrencyService.updateCryptoCurrenciesBySymbols(getSymbolSet());        
+    }
+
     private void checkAlreadyExistBySymbol() {
+        CryptoCurrenciesSelector cryptoSelector = new CryptoCurrenciesSelector();
+
         //Get Symbol Set of records to be inserted
         Set<String> symbolSet = getSymbolSet();
 
         //Get Currencies with this Symbols
-        List<CryptoCurrency__c> alreadyExistingCurrencies = new CryptoCurrenciesSelector().selectBySymbol(symbolSet);
+        List<CryptoCurrency__c> alreadyExistingCurrencies = cryptoSelector.selectBySymbol(symbolSet);
 
         //Get Symbol Set of symbols that exist and should be added
         Set<String> existingSymbolSet = getSymbolSet(alreadyExistingCurrencies);
