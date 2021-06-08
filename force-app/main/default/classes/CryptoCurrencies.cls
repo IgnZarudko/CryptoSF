@@ -34,6 +34,11 @@ public with sharing class CryptoCurrencies extends fflib_SObjectDomain {
         Set<String> symbolSet = new Set<String>();
         
         for(CryptoCurrency__c cryptoCurrency: currencies) {
+            //Check elements of new list, 
+            //If there are duplicates not in system, but in insert data
+            if (symbolSet.contains(cryptoCurrency.Symbol__c)) {
+                cryptoCurrency.addError('Duplicate symbols in insert list');
+            }
             symbolSet.add(cryptoCurrency.Symbol__c);
         }
 
