@@ -15,4 +15,12 @@ public with sharing class CryptoCurrenciesSelector extends fflib_SObjectSelector
         return (List<CryptoCurrency__c>) selectSObjectsById(idSet);
     } 
 
+    public List<CryptoCurrency__c> selectBySymbol(Set<String> symbolSet) {
+        return (List<CryptoCurrency__c>) Database.query(
+                newQueryFactory()
+                    .setCondition('Symbol__c IN :symbolSet')
+                    .toSOQL()
+            );
+    }
+
 }
