@@ -4,16 +4,18 @@ public with sharing class CryptoCurrencies extends fflib_SObjectDomain {
     }
 
     public override void onBeforeInsert() {
-        //check that some of symbols already exist
-        checkThatCurrenciesAlreadyExistBySymbol();
+        //Check that some of symbols already exist
+        checkAlreadyExistBySymbol();
     }
 
-    private void checkThatCurrenciesAlreadyExistBySymbol() {
-        //Symbol Set of records to be inserted
-        Set<String> symbolSet = getSymbolSet((List<CryptoCurrency__c>) Records);
+    private void checkAlreadyExistBySymbol() {
+        //Get Symbol Set of records to be inserted
+        Set<String> symbolSet = getSymbolSet();
 
-        //Get SymbolSet of symbols that exist and should be added
+        //Get Currencies with this Symbols
         List<CryptoCurrency__c> alreadyExistingCurrencies = new CryptoCurrenciesSelector().selectBySymbol(symbolSet);
+
+        //Get Symbol Set of symbols that exist and should be added
         Set<String> existingSymbolSet = getSymbolSet(alreadyExistingCurrencies);
         
         //Add error for currencies that have duplicate symbol
@@ -22,6 +24,10 @@ public with sharing class CryptoCurrencies extends fflib_SObjectDomain {
                 cryptoCurrency.addError('CryptoCurrency with this symbol already exists');
             } 
         }
+    }
+
+    private Set<String> getSymbolSet() {
+        return getSymbolSet((List<CryptoCurrency__c>) Records);
     }
 
     private Set<String> getSymbolSet(List<CryptoCurrency__c> currencies) {
