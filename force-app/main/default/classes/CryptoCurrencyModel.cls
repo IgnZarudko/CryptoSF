@@ -11,9 +11,9 @@ public class CryptoCurrencyModel {
     public Integer num_market_pairs;
     public String date_added;
     public List<String> tags;
-    public Integer max_supply;
-    public Integer circulating_supply;
-    public Integer total_supply;
+    public Double max_supply;
+    public Double circulating_supply;
+    public Double total_supply;
     public Integer is_active;
     public Object platform;
     public Integer cmc_rank;
