@@ -12,7 +12,14 @@ public with sharing class CryptoCurrencies extends fflib_SObjectDomain {
         //Make a callout and update
         //If symbol was not found, add error
         System.debug('After insert call');
-        CryptoCurrencyService.updateCryptoCurrenciesBySymbols(getSymbolSet());        
+        try {
+            CryptoCurrencyService.updateCryptoCurrenciesBySymbols(getSymbolSet());        
+        }
+        catch (CalloutException e) {
+            for (CryptoCurrency__c cryptoCurrency: (List<CryptoCurrency__c>) Records) {
+                cryptoCurrency.addError(e.getStackTraceString());
+            }
+        }
     }
 
     private void checkAlreadyExistBySymbol() {

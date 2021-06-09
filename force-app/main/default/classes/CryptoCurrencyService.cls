@@ -12,29 +12,10 @@ public with sharing class CryptoCurrencyService {
 
         List<CryptoCurrency__c> cryptoCurrencies = cryptoSelector.selectBySymbol(symbolSet);
 
-        String commaSeparatedSymbols = symbolSet
-                                        .toString()
-                                        .replace('{', '')
-                                        .replace('}', '')
-                                        .replace(' ', '');
+        //Make a callout 
+        HttpResponse res = getCryptoCurrencyDataBySymbols(symbolSet);
 
-        String parametrizedUrl = LATEST_QUOTES_URL + '?symbol=' + commaSeparatedSymbols + '&skip_invalid=true';
-        
-        System.debug('URL: ' + parametrizedUrl);
-
-        HttpRequest req = new HttpRequest();
-        
-        req.setMethod('GET');
-        req.setEndpoint(parametrizedUrl);
-        req.setHeader(ACCESS_TOKEN_KEY, ACCESS_TOKEN);
-        req.setHeader('Accept', 'application/json');
-
-        HttpResponse res = new Http().send(req);
-
-        System.debug('Response: ' + res.getStatusCode());
-        System.debug('Body: ' + res.getBody());
-
-        //think about is it good to leave response code here
+        //Think about is it good to leave response code here
         if (res.getStatusCode() == 200) {
             Map<String,Object> responseCryptoMap = (Map<String,Object>)JSON.deserializeUntyped(res.getBody());
 
@@ -59,6 +40,27 @@ public with sharing class CryptoCurrencyService {
         else {
             throw new CalloutException('Response were not received, code ' + res.getStatusCode());
         }
+    }
+
+    private static HttpResponse getCryptoCurrencyDataBySymbols(Set<String> symbolSet) {
+        String commaSeparatedSymbols = symbolSet
+                                        .toString()
+                                        .replace('{', '')
+                                        .replace('}', '')
+                                        .replace(' ', '');
+
+        String parametrizedUrl = LATEST_QUOTES_URL + '?symbol=' + commaSeparatedSymbols + '&skip_invalid=true';
+        
+        System.debug('URL: ' + parametrizedUrl);
+
+        HttpRequest req = new HttpRequest();
+        
+        req.setMethod('GET');
+        req.setEndpoint(parametrizedUrl);
+        req.setHeader(ACCESS_TOKEN_KEY, ACCESS_TOKEN);
+        req.setHeader('Accept', 'application/json');
+
+        return new Http().send(req);
     }
 
     private static CryptoCurrency__c fillCryptoCurrencyFromModel(CryptoCurrency__c cryptoCurrency, CryptoCurrencyModel model) {
