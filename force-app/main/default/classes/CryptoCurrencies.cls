@@ -46,21 +46,30 @@ public with sharing class CryptoCurrencies extends fflib_SObjectDomain {
         return getSymbolSet((List<CryptoCurrency__c>) Records);
     }
 
-    private Set<String> getSymbolSet(List<CryptoCurrency__c> currencies) {
-        Set<String> symbolSet = new Set<String>();
-        
+    private Set<String> getSymbolSet(List<CryptoCurrency__c> cryptoCurrencies) {
+        return getSymbolMap(cryptoCurrencies).keySet();
+    }
+
+    private Map<string, CryptoCurrency__c> getSymbolMap() {
+        return getSymbolMap((List<CryptoCurrency__c>) Records);
+    }
+
+    private Map<String, CryptoCurrency__c> getSymbolMap(List<CryptoCurrency__c> cryptoCurrencies) {
+        Map<String, CryptoCurrency__c> symbolMap = new Map<String, CryptoCurrency__c>();
+
         for(CryptoCurrency__c cryptoCurrency: currencies) {
             //Check elements of new list, 
             //If there are duplicates not in system, but in insert data
-            if (symbolSet.contains(cryptoCurrency.Symbol__c)) {
+            if (symbolMap.get(cryptoCurrency.Symbol__c) == null) {
                 cryptoCurrency.addError('Duplicate symbols in insert list');
             }
-            symbolSet.add(cryptoCurrency.Symbol__c);
+            else {
+                symbolMap.add(cryptoCurrency.Symbol__c);
+            }
         }
 
-        return symbolSet;
+        return symbolMap;
     }
-
 
     public class Constructor implements fflib_SObjectDomain.IConstructable {
         public fflib_SObjectDomain construct(List<SObject> sObjectList) {
