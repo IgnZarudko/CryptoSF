@@ -60,7 +60,7 @@ public with sharing class CryptoCurrencies extends fflib_SObjectDomain {
         for(CryptoCurrency__c cryptoCurrency: cryptoCurrencies) {
             //Check elements of new list, 
             //If there are duplicates not in system, but in insert data
-            if (symbolMap.get(cryptoCurrency.Symbol__c) == null) {
+            if (symbolMap.get(cryptoCurrency.Symbol__c) != null) {
                 cryptoCurrency.addError('Duplicate symbols in insert list');
             }
             else {
