@@ -57,14 +57,14 @@ public with sharing class CryptoCurrencies extends fflib_SObjectDomain {
     private Map<String, CryptoCurrency__c> getSymbolMap(List<CryptoCurrency__c> cryptoCurrencies) {
         Map<String, CryptoCurrency__c> symbolMap = new Map<String, CryptoCurrency__c>();
 
-        for(CryptoCurrency__c cryptoCurrency: currencies) {
+        for(CryptoCurrency__c cryptoCurrency: cryptoCurrencies) {
             //Check elements of new list, 
             //If there are duplicates not in system, but in insert data
             if (symbolMap.get(cryptoCurrency.Symbol__c) == null) {
                 cryptoCurrency.addError('Duplicate symbols in insert list');
             }
             else {
-                symbolMap.add(cryptoCurrency.Symbol__c);
+                symbolMap.put(cryptoCurrency.Symbol__c, cryptoCurrency);
             }
         }
 
