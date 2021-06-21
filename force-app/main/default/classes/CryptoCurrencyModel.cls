@@ -15,11 +15,20 @@ public class CryptoCurrencyModel {
     public Double circulating_supply;
     public Double total_supply;
     public Integer is_active;
-    public Object platform;
+    public Platform platform;
     public Integer cmc_rank;
     public Integer is_fiat;
     public String last_updated;
     public Quote quote;
+    
+
+    public class Platform {
+		public Integer id;
+		public String name;
+		public String symbol;
+		public String slug;
+		public String token_address;
+	}
 
     public class USD {
         public Decimal price;
