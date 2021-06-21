@@ -11,14 +11,7 @@ public with sharing class CryptoCurrencies extends fflib_SObjectDomain {
     public override void onAfterInsert() {
         //Make a callout and update
         //If symbol was not found, add error
-        try {
-            CryptoCurrencyService.updateCryptoCurrenciesBySymbols(getSymbolSet());        
-        }
-        catch (CalloutException e) {
-            for (CryptoCurrency__c cryptoCurrency: (List<CryptoCurrency__c>) Records) {
-                cryptoCurrency.addError('Error occured when tried to get CryptoCurrency from service');
-            }
-        }
+        CryptoCurrencyService.updateCryptoCurrenciesBySymbols(getSymbolSet());
     }
 
     private void checkAlreadyExistBySymbol() {
