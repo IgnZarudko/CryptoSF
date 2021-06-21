@@ -25,7 +25,8 @@ public with sharing class CryptoCurrencyService {
             for (CryptoCurrency__c cryptoCurrency: cryptoCurrencies) {
                 Object cryptoCurrencyJson = responseCryptoMap.get(cryptoCurrency.Symbol__c);
                 if (cryptoCurrencyJson == null) {
-                    cryptoCurrency.addError('There is no such CryptoCurrency');
+                    cryptoCurrency.Name__c = 'Wrong Symbol';
+                    cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
                 }
                 else {
                     String cryptoCurrencyString = JSON.serialize(cryptoCurrencyJson);
@@ -51,8 +52,6 @@ public with sharing class CryptoCurrencyService {
 
         String parametrizedUrl = LATEST_QUOTES_URL + '?symbol=' + commaSeparatedSymbols + '&skip_invalid=true';
         
-        System.debug('URL: ' + parametrizedUrl);
-
         HttpRequest req = new HttpRequest();
         
         req.setMethod('GET');
@@ -67,7 +66,7 @@ public with sharing class CryptoCurrencyService {
         System.debug(cryptoCurrency.Symbol__c);
         System.debug(model == null);
 
-        cryptoCurrency.Name = model.name;
+        cryptoCurrency.Name__c = model.name;
         cryptoCurrency.Market_Cap__c = model.quote.USD.market_cap;
         cryptoCurrency.Price__c = model.quote.USD.price;
         cryptoCurrency.Volume__c = model.quote.USD.volume_24h;
