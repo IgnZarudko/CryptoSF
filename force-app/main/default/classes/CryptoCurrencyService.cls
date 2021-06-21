@@ -8,8 +8,10 @@ public with sharing class CryptoCurrencyService {
     @future (callout=true)
     public static void updateCryptoCurrenciesBySymbols(Set<String> symbolSet) {
 
+        //Create a Selector
         CryptoCurrenciesSelector cryptoSelector = new CryptoCurrenciesSelector();
 
+        //Select CryptoCurrency list by symbols
         List<CryptoCurrency__c> cryptoCurrencies = cryptoSelector.selectBySymbol(symbolSet);
 
         //Make a callout 
@@ -23,24 +25,44 @@ public with sharing class CryptoCurrencyService {
             responseCryptoMap = (Map<String, Object>) responseCryptoMap.get('data');
 
             for (CryptoCurrency__c cryptoCurrency: cryptoCurrencies) {
+
+                //Get JSON Object with data
                 Object cryptoCurrencyJson = responseCryptoMap.get(cryptoCurrency.Symbol__c);
+                //If There is no such element, put error message
                 if (cryptoCurrencyJson == null) {
-                    cryptoCurrency.Name__c = 'Wrong Symbol';
-                    cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
+                    cryptoCurrency.Name__c = 'Invalid Symbol';
+                    // cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
                 }
+                //Else try to parse
                 else {
+                    //Get JSON String of current currency
                     String cryptoCurrencyString = JSON.serialize(cryptoCurrencyJson);
-                    CryptoCurrencyModel model = CryptoCurrencyModel.parse(cryptoCurrencyString);
-                    cryptoCurrency = fillCryptoCurrencyFromModel(cryptoCurrency, model);
+                    CryptoCurrencyModel model;
+                    try {
+                        //Try to parse it to model
+                        model = CryptoCurrencyModel.parse(cryptoCurrencyString);
+                        cryptoCurrency = fillCryptoCurrencyFromModel(cryptoCurrency, model);
+                    }
+                    //Pass parse error, if couldn't parse JSON
+                    catch(JSONException e) {
+                        System.debug('Exception when parsing CryptoCurrency');
+                        System.debug(e.getStackTraceString());
+                        cryptoCurrency.Name__c = 'Parse Error';
+                        // cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
+                    }
                 }
             }
-
-            //Update currencies without errors
-            Database.update(cryptoCurrencies, false);
         }
+        //If response is bad, pass Callout Error
         else {
-            throw new CalloutException('Response were not received, code ' + res.getStatusCode());
+            for (CryptoCurrency__c cryptoCurrency: cryptoCurrencies) {
+                cryptoCurrency.Name__c = 'Callout Error';
+            }
+            // throw new CalloutException('Response were not received, code ' + res.getStatusCode());
         }
+
+        //Update currencies
+        Database.update(cryptoCurrencies, false);
     }
 
     private static HttpResponse getCryptoCurrencyDataBySymbols(Set<String> symbolSet) {
