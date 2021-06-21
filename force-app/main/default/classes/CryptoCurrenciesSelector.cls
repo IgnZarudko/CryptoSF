@@ -3,7 +3,10 @@ public with sharing class CryptoCurrenciesSelector extends fflib_SObjectSelector
     public List<Schema.SObjectField> getSObjectFieldList() {
         return new List<Schema.SObjectField> {
             CryptoCurrency__c.Symbol__c,
-            CryptoCurrency__c.Name,
+            CryptoCurrency__c.Name__c,
+            CryptoCurrency__c.Market_Cap__c,
+            CryptoCurrency__c.Price__c,
+            CryptoCurrency__c.Volume__c,
             CryptoCurrency__c.Id
         };
     }
