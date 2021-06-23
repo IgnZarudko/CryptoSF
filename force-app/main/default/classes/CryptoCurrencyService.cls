@@ -5,64 +5,77 @@ public with sharing class CryptoCurrencyService {
     private static String ACCESS_TOKEN_KEY = 'X-CMC_PRO_API_KEY';
     private static String ACCESS_TOKEN = '34ed1f2a-e39f-42d6-aeac-e4e0c1d46e59';
 
+
     @future (callout=true)
+    public static void updateCryptoCurrenciesBySymbolsAsync(Set<String> symbolSet) {
+        updateCryptoCurrenciesBySymbols(symbolSet);
+    }
+
     public static void updateCryptoCurrenciesBySymbols(Set<String> symbolSet) {
-
-        //Create a Selector
-        CryptoCurrenciesSelector cryptoSelector = new CryptoCurrenciesSelector();
-
+        //Create a Selector 
         //Select CryptoCurrency list by symbols
+        CryptoCurrenciesSelector cryptoSelector = new CryptoCurrenciesSelector();
         List<CryptoCurrency__c> cryptoCurrencies = cryptoSelector.selectBySymbol(symbolSet);
 
-        //Make a callout 
+        //Create Unit of Work
+        fflib_SObjectUnitOfWork uow = new fflib_SObjectUnitOfWork(
+            new List<SObjectType> {CryptoCurrency__c.getSObjectType()}
+        );
+
+        //Make a callout
         HttpResponse res = getCryptoCurrencyDataBySymbols(symbolSet);
 
-        //Think about is it good to leave response code here
         if (res.getStatusCode() == 200) {
             Map<String,Object> responseCryptoMap = (Map<String,Object>)JSON.deserializeUntyped(res.getBody());
 
             //Work with map to update created records
             responseCryptoMap = (Map<String, Object>) responseCryptoMap.get('data');
-
-            for (CryptoCurrency__c cryptoCurrency: cryptoCurrencies) {
-
-                //Get JSON Object with data
-                Object cryptoCurrencyJson = responseCryptoMap.get(cryptoCurrency.Symbol__c);
-                //If There is no such element, put error message
-                if (cryptoCurrencyJson == null) {
-                    cryptoCurrency.Name__c = 'Invalid Symbol';
-                    // cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
-                }
-                //Else try to parse
-                else {
-                    //Get JSON String of current currency
-                    String cryptoCurrencyString = JSON.serialize(cryptoCurrencyJson);
-                    CryptoCurrencyModel model;
-                    try {
-                        //Try to parse it to model
-                        model = CryptoCurrencyModel.parse(cryptoCurrencyString);
-                        cryptoCurrency = fillCryptoCurrencyFromModel(cryptoCurrency, model);
-                    }
-                    //Pass parse error, if couldn't parse JSON
-                    catch(JSONException e) {
-                        System.debug('Exception when parsing CryptoCurrency');
-                        System.debug(e.getStackTraceString());
-                        cryptoCurrency.Name__c = 'Parse Error';
-                        // cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
-                    }
-                }
-            }
+            
+            //Update Crypto Currencies using response
+            updateCryptoCurrencies(cryptoCurrencies, responseCryptoMap, uow);   
         }
         //If response is bad, pass Callout Error
         else {
             for (CryptoCurrency__c cryptoCurrency: cryptoCurrencies) {
                 cryptoCurrency.Name__c = 'Callout Error';
+                uow.registerDirty(cryptoCurrency);
             }
-            // throw new CalloutException('Response were not received, code ' + res.getStatusCode());
         }
-
+        
         //Update currencies
-        Database.update(cryptoCurrencies, false);
+        uow.commitWork();
+    }
+
+    private static void updateCryptoCurrencies(List<CryptoCurrency__c> oldCryptoCurrencies, Map<String, Object> responseCryptoMap, fflib_SObjectUnitOfWork uow) {
+        for (CryptoCurrency__c cryptoCurrency: oldCryptoCurrencies) {
+
+            //Get JSON Object with data
+            Object cryptoCurrencyJson = responseCryptoMap.get(cryptoCurrency.Symbol__c);
+            //If There is no such element, put error message
+            if (cryptoCurrencyJson == null) {
+                cryptoCurrency.Name__c = 'Invalid Symbol';
+                // cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
+            }
+            //Else try to parse
+            else {
+                //Get JSON String of current currency
+                String cryptoCurrencyString = JSON.serialize(cryptoCurrencyJson);
+                CryptoCurrencyModel model;
+                try {
+                    //Try to parse it to model
+                    model = CryptoCurrencyModel.parse(cryptoCurrencyString);
+                    cryptoCurrency = fillCryptoCurrencyFromModel(cryptoCurrency, model);
+                }
+                //Pass parse error, if couldn't parse JSON
+                catch(JSONException e) {
+                    System.debug('Exception when parsing CryptoCurrency');
+                    System.debug(e.getStackTraceString());
+                    cryptoCurrency.Name__c = 'Parse Error';
+                    // cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
+                }
+            }
+            uow.registerDirty(cryptoCurrency);
+        }
     }
 
     private static HttpResponse getCryptoCurrencyDataBySymbols(Set<String> symbolSet) {
