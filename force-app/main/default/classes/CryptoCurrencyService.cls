@@ -54,7 +54,7 @@ public with sharing class CryptoCurrencyService {
             //If There is no such element, put error message
             if (cryptoCurrencyJson == null) {
                 cryptoCurrency.Name__c = 'Invalid Symbol';
-                // cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
+                cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
             }
             //Else try to parse
             else {
@@ -71,7 +71,7 @@ public with sharing class CryptoCurrencyService {
                     System.debug('Exception when parsing CryptoCurrency');
                     System.debug(e.getStackTraceString());
                     cryptoCurrency.Name__c = 'Parse Error';
-                    // cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
+                    cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
                 }
             }
             uow.registerDirty(cryptoCurrency);
