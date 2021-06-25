@@ -76,6 +76,27 @@ public with sharing class CryptoCurrencyTriggerTest {
         System.assertEquals('Callout Error', cryptoCurrency.Name__c);
     }
 
+    @isTest
+    public static void insertCryptoCurrenciesWithOneInvalid() {
+        Test.setMock(HttpCalloutMock.class, getSuccessMock());
+
+        CryptoCurrency__c cryptoCurrency = new CryptoCurrency__c(Symbol__c = 'TEST');
+        CryptoCurrency__c invalidCryptoCurrency = new CryptoCurrency__c(Symbol__c = 'TTT');
+
+        
+
+        Test.startTest();
+
+            insert new List<CryptoCurrency__c> {cryptoCurrency, invalidCryptoCurrency};
+        
+        Test.stopTest();
+
+        invalidCryptoCurrency = [SELECT Name__c, Symbol__c FROM CryptoCurrency__c WHERE Id = :invalidCryptoCurrency.Id];
+
+        System.assertEquals('Invalid Symbol', invalidCryptoCurrency.Name__c);
+        System.assertEquals('TTT - error', invalidCryptoCurrency.Symbol__c);
+    }
+
     private static StaticResourceCalloutMock getSuccessMock() {
         return getMockWithBody(200, 'CryptoCurrencyResponseBody');
     }
