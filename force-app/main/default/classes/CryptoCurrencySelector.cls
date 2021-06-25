@@ -1,4 +1,4 @@
-public with sharing class CryptoCurrenciesSelector extends fflib_SObjectSelector {
+public with sharing class CryptoCurrencySelector extends fflib_SObjectSelector {
 
     public List<Schema.SObjectField> getSObjectFieldList() {
         return new List<Schema.SObjectField> {
