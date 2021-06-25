@@ -5,17 +5,40 @@ public with sharing class CryptoCurrencyService {
     private static String ACCESS_TOKEN_KEY = 'X-CMC_PRO_API_KEY';
     private static String ACCESS_TOKEN = '34ed1f2a-e39f-42d6-aeac-e4e0c1d46e59';
 
+    public static void validateDuplicateSymbol(List<CryptoCurrency__c> newCryptoCurrencies) {
+        CryptoCurrencySelector selector = new CryptoCurrencySelector();
+
+        //Get Symbol Set of records to be inserted
+        Set<String> symbolSet = CryptoCurrencyUtil.getSymbolSet(newCryptoCurrencies);
+
+        //Get Currencies with this Symbols
+        List<CryptoCurrency__c> existingCryptoCurrencies = selector.selectBySymbol(symbolSet);
+
+        //Get Symbol Set of symbols that exist and should be added
+        Set<String> existingSymbolSet = CryptoCurrencyUtil.getSymbolSet(existingCryptoCurrencies);
+        
+        //Add error for currencies that have duplicate symbol
+        for (CryptoCurrency__c cryptoCurrency : newCryptoCurrencies) {
+            if (existingSymbolSet.contains(cryptoCurrency.Symbol__c)) {
+                cryptoCurrency.addError('CryptoCurrency with this symbol already exists');
+            } 
+        }
+    }
 
     @future (callout=true)
     public static void updateCryptoCurrenciesBySymbolsAsync(Set<String> symbolSet) {
-        updateCryptoCurrenciesBySymbols(symbolSet);
+        CryptoCurrencySelector selector = new CryptoCurrencySelector();
+        
+        List<CryptoCurrency__c> records = selector.selectBySymbol(symbolSet);
+
+        updateCryptoCurrencies(records);
     }
 
-    public static void updateCryptoCurrenciesBySymbols(Set<String> symbolSet) {
-        //Create a Selector 
-        //Select CryptoCurrency list by symbols
-        CryptoCurrenciesSelector cryptoSelector = new CryptoCurrenciesSelector();
-        List<CryptoCurrency__c> cryptoCurrencies = cryptoSelector.selectBySymbol(symbolSet);
+    public static void updateCryptoCurrencies(List<CryptoCurrency__c> records) {
+        
+        List<CryptoCurrency__c> cryptoCurrencies = getValidCryptoCurrencies(records);
+
+        Set<String> symbolSet = CryptoCurrencyUtil.getSymbolSet(cryptoCurrencies);
 
         //Create Unit of Work
         fflib_SObjectUnitOfWork uow = new fflib_SObjectUnitOfWork(
@@ -32,7 +55,7 @@ public with sharing class CryptoCurrencyService {
             responseCryptoMap = (Map<String, Object>) responseCryptoMap.get('data');
             
             //Update Crypto Currencies using response
-            updateCryptoCurrencies(cryptoCurrencies, responseCryptoMap, uow);   
+            registerCryptoCurrenciesUpdates(cryptoCurrencies, responseCryptoMap, uow);   
         }
         //If response is bad, pass Callout Error
         else {
@@ -42,11 +65,27 @@ public with sharing class CryptoCurrencyService {
             }
         }
         
-        //Update currencies
+        //Commit updates
         uow.commitWork();
     }
 
-    private static void updateCryptoCurrencies(List<CryptoCurrency__c> oldCryptoCurrencies, Map<String, Object> responseCryptoMap, fflib_SObjectUnitOfWork uow) {
+    //Get list of crypto currencies which have no errors
+    public static List<CryptoCurrency__c> getValidCryptoCurrencies(List<CryptoCurrency__c> allCryptoCurrencies) {
+        List<CryptoCurrency__c> cryptoCurrencies = new List<CryptoCurrency__c>();
+        
+        for(CryptoCurrency__c cryptoCurrency: allCryptoCurrencies) {
+            if (!cryptoCurrency.hasErrors()) {
+                cryptoCurrencies.add(cryptoCurrency);
+            }
+        }
+
+        return cryptoCurrencies;
+    }
+
+    //Register updates of crypto currencies
+    private static void registerCryptoCurrenciesUpdates(List<CryptoCurrency__c> oldCryptoCurrencies, 
+                                                            Map<String, Object> responseCryptoMap, 
+                                                            fflib_SObjectUnitOfWork uow) {
         for (CryptoCurrency__c cryptoCurrency: oldCryptoCurrencies) {
 
             //Get JSON Object with data
@@ -74,6 +113,7 @@ public with sharing class CryptoCurrencyService {
                     cryptoCurrency.Symbol__c = cryptoCurrency.Symbol__c + ' - error';
                 }
             }
+            //Register CryptoCurrency
             uow.registerDirty(cryptoCurrency);
         }
     }
