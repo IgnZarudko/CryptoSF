@@ -37,17 +37,13 @@ public with sharing class CryptoCurrencyTriggerTest {
 
         Test.stopTest();
 
-        cryptoCurrency = [SELECT Id, Name__c, Price__c, Market_Cap__c, Volume__c FROM CryptoCurrency__c WHERE Id = :cryptoCurrency.Id];
-
-        System.assertEquals('Test Crypto', cryptoCurrency.Name__c);
-        System.assertEquals(300, cryptoCurrency.Price__c);
-        System.assertEquals(123456789, cryptoCurrency.Volume__c);
-        System.assertEquals(987654321, cryptoCurrency.Market_Cap__c);
+        System.assert(!result.success);
+        System.assertEquals(1, result.getErrors().size());
     }
 
     @isTest
     public static void insertCryptoCurrencyBadResponseBody_Test() {
-        Test.setMock(HttpCalloutMock.class, getBadBodyMock());
+        Test.setMock(HttpCalloutMock.class, getBadResponseBodyMock());
 
         CryptoCurrency__c cryptoCurrency = new CryptoCurrency__c(Symbol__c = 'TEST');
 
@@ -63,29 +59,39 @@ public with sharing class CryptoCurrencyTriggerTest {
         System.assertEquals('TEST - error', cryptoCurrency.Symbol__c);
     }    
 
+    @isTest
+    public static void insertCryptoCurrencyBadResponseCode_Test() {
+        Test.setMock(HttpCalloutMock.class, getBadResponseCodeMock());
+
+        CryptoCurrency__c cryptoCurrency = new CryptoCurrency__c(Symbol__c = 'TEST');
+
+        Test.startTest();
+            
+            insert cryptoCurrency;
+
+        Test.stopTest();
+
+        cryptoCurrency = [SELECT Id, Name__c, Symbol__c FROM CryptoCurrency__c WHERE Id = :cryptoCurrency.Id];
+
+        System.assertEquals('Callout Error', cryptoCurrency.Name__c);
+    }
 
     private static StaticResourceCalloutMock getSuccessMock() {
-        StaticResourceCalloutMock mock = new StaticResourceCalloutMock();
-        mock.setStaticResource('CryptoCurrencyResponseBody');
-        mock.setStatusCode(200);
-        mock.setHeader('Content-Type','application/json');
-
-        return mock;
+        return getMockWithBody(200, 'CryptoCurrencyResponseBody');
     }
 
     private static StaticResourceCalloutMock getBadResponseCodeMock() {
-        StaticResourceCalloutMock mock = new StaticResourceCalloutMock();
-        mock.setStaticResource('CryptoCurrencyResponseBody');
-        mock.setStatusCode(404);
-        mock.setHeader('Content-Type','application/json');
-
-        return mock;
+        return getMockWithBody(404, 'CryptoCurrencyResponseBody');
     }
 
-    private static StaticResourceCalloutMock getBadBodyMock() {
+    private static StaticResourceCalloutMock getBadResponseBodyMock() {
+        return getMockWithBody(200, 'CryptoCurrencyBadResponseBody');
+    }
+
+    private static StaticResourceCalloutMock getMockWithBody(Integer responseCode, String staticResourceName) {
         StaticResourceCalloutMock mock = new StaticResourceCalloutMock();
-        mock.setStaticResource('CryptoCurrencyBadResponseBody');
-        mock.setStatusCode(200);
+        mock.setStaticResource(staticResourceName);
+        mock.setStatusCode(responseCode);
         mock.setHeader('Content-Type','application/json');
 
         return mock;
