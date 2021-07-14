@@ -28,7 +28,7 @@ public with sharing class CryptoCurrencySelector extends fflib_SObjectSelector {
     }
 
     public List<CryptoCurrency__c> selectLimited(Integer limitCount) {
-        return selectLimitedWithOffset(limitCount, 0)
+        return selectLimitedWithOffset(limitCount, 0);
     }
 
     public List<CryptoCurrency__c> selectLimitedWithOffset(Integer limitCount, Integer offsetCount) {
