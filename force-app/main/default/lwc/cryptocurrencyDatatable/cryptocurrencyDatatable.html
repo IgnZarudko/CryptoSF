@@ -1,0 +1,16 @@
+<template>
+    <table>
+        <tr>
+            <th>Cryptocurrency</th>
+            <th>Price In USD</th>
+            <th>Abbrev</th>
+        </tr>
+        <template for:each={cryptocurrencies} for:item="cryptocurrency">
+            <tr key={cryptocurrency.Id}>
+                <td>{cryptocurrency.Name}</td>
+                <td>{cryptocurrency.Price__c}</td>
+                <td>{cryptocurrency.Symbol__c}</td>
+            </tr>
+        </template>
+    </table>
+</template>
