@@ -40,4 +40,14 @@ public with sharing class CryptoCurrencySelector extends fflib_SObjectSelector {
             );
     }
 
+    public List<CryptoCurrency__c> selectAllNotChangedInLastHours(Integer hours) {
+        DateTime timeWhenUpdateRequired = System.Now().addHours( -1 * hours);
+
+        return (List<CryptoCurrency__c>) Database.query(
+            newQueryFactory()
+                .setCondition('LastModifiedDate<=:timeWhenUpdateRequired')
+                .toSOQL()
+        );
+    }
+
 }
