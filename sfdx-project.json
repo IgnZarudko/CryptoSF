@@ -7,6 +7,7 @@
   ],
   "name": "CryptoSF",
   "namespace": "",
-  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sfdcLoginUrl": "https://empathetic-impala-s5dsiv-dev-ed.my.salesforce.com",
+  "oauthLocalPort" : 1717,
   "sourceApiVersion": "51.0"
 }

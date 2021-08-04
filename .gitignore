@@ -42,7 +42,6 @@ $RECYCLE.BIN/
 
 # Additionally ignored SFDX files and directories
 scripts/
-config/
 .eslintignore
 .forceignore
 .prettierignore
