@@ -155,8 +155,9 @@
     <externalSharingModel>Private</externalSharingModel>
     <label>CryptoCurrency</label>
     <nameField>
-        <label>Name</label>
-        <type>Text</type>
+        <displayFormat>CC-{00000}</displayFormat>
+        <label>Number</label>
+        <type>AutoNumber</type>
     </nameField>
     <pluralLabel>CryptoCurrencies</pluralLabel>
     <searchLayouts></searchLayouts>
