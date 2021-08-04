@@ -5,7 +5,7 @@ jobs:
       - checkout
       - sfdx/install
       - sfdx/auth:
-          defaultusername: ascendp6n9@empathetic-impala-s5dsiv.com
+          defaultusername: user@email.com
       - sfdx/scratch-create:
           scratch-alias: circleci
           scratch-config: ./config/project-scratch-def.json
@@ -17,6 +17,6 @@ orbs:
   sfdx: circleci/salesforce-sfdx@2.2.0
 version: 2.1
 workflows:
-  basic-test:
+  scratch-org-test:
     jobs:
       - create-open-delete
