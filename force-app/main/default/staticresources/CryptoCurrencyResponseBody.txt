@@ -1,0 +1,72 @@
+{
+    "status": {
+        "timestamp": "2021-06-23T12:50:04.430Z",
+        "error_code": 0,
+        "error_message": null,
+        "elapsed": 11,
+        "credit_count": 1,
+        "notice": null
+    },
+    "data": {
+        "TEST": {
+            "id": 12345,
+            "name": "Test Crypto",
+            "symbol": "TEST",
+            "slug": "test crypto",
+            "num_market_pairs": 5941,
+            "date_added": "2015-08-07T00:00:00.000Z",
+            "tags": [
+                "mineable",
+                "pow",
+                "smart-contracts",
+                "coinbase-ventures-portfolio",
+                "three-arrows-capital-portfolio",
+                "polychain-capital-portfolio",
+                "binance-labs-portfolio",
+                "arrington-xrp-capital",
+                "blockchain-capital-portfolio",
+                "boostvc-portfolio",
+                "cms-holdings-portfolio",
+                "dcg-portfolio",
+                "dragonfly-capital-portfolio",
+                "electric-capital-portfolio",
+                "fabric-ventures-portfolio",
+                "framework-ventures",
+                "hashkey-capital-portfolio",
+                "kinetic-capital",
+                "huobi-capital",
+                "alameda-research-portfolio",
+                "a16z-portfolio",
+                "1confirmation-portfolio",
+                "winklevoss-capital",
+                "usv-portfolio",
+                "placeholder-ventures-portfolio",
+                "pantera-capital-portfolio",
+                "multicoin-capital-portfolio",
+                "paradigm-xzy-screener"
+            ],
+            "max_supply": null,
+            "circulating_supply": 116406719.999,
+            "total_supply": 116406719.999,
+            "is_active": 1,
+            "platform": null,
+            "cmc_rank": 2,
+            "is_fiat": 0,
+            "last_updated": "2021-06-23T10:31:02.000Z",
+            "quote": {
+                "USD": {
+                    "price": 300,
+                    "volume_24h": 123456789,
+                    "percent_change_1h": -0.38119513,
+                    "percent_change_24h": 6.01643914,
+                    "percent_change_7d": -20.3541082,
+                    "percent_change_30d": -11.43730875,
+                    "percent_change_60d": -9.84256155,
+                    "percent_change_90d": 23.47685404,
+                    "market_cap": 987654321,
+                    "last_updated": "2021-06-23T10:31:02.000Z"
+                }
+            }
+        }
+    }
+}
