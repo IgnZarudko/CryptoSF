@@ -44,7 +44,7 @@ public class CryptoCurrencyWrapper {
     }
 
     
-    public static CryptoCurrencyModel parse(String json) {
-        return (CryptoCurrencyModel) System.JSON.deserialize(json, CryptoCurrencyModel.class);
+    public static CryptoCurrencyWrapper parse(String json) {
+        return (CryptoCurrencyWrapper) System.JSON.deserialize(json, CryptoCurrencyWrapper.class);
     }
 }

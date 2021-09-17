@@ -99,11 +99,11 @@ public with sharing class CryptoCurrencyService {
             else {
                 //Get JSON String of current currency
                 String cryptoCurrencyString = JSON.serialize(cryptoCurrencyJson);
-                CryptoCurrencyWrapper model;
+                CryptoCurrencyWrapper wrapper;
                 try {
-                    //Try to parse it to model
-                    model = CryptoCurrencyWrapper.parse(cryptoCurrencyString);
-                    cryptoCurrency = fillCryptoCurrencyFromModel(cryptoCurrency, model);
+                    //Try to parse it to wrapper
+                    wrapper = CryptoCurrencyWrapper.parse(cryptoCurrencyString);
+                    cryptoCurrency = fillCryptoCurrencyFromWrapper(cryptoCurrency, wrapper);
                 }
                 //Pass parse error, if couldn't parse JSON
                 catch(JSONException e) {
@@ -137,14 +137,14 @@ public with sharing class CryptoCurrencyService {
         return new Http().send(req);
     }
 
-    private static CryptoCurrency__c fillCryptoCurrencyFromWrapper(CryptoCurrency__c cryptoCurrency, CryptoCurrencyWrapper model) {
+    private static CryptoCurrency__c fillCryptoCurrencyFromWrapper(CryptoCurrency__c cryptoCurrency, CryptoCurrencyWrapper wrapper) {
         System.debug(cryptoCurrency.Symbol__c);
-        System.debug(model == null);
+        System.debug(wrapper == null);
 
-        cryptoCurrency.Name__c = model.name;
-        cryptoCurrency.Market_Cap__c = model.quote.USD.market_cap;
-        cryptoCurrency.Price__c = model.quote.USD.price;
-        cryptoCurrency.Volume__c = model.quote.USD.volume_24h;
+        cryptoCurrency.Name__c = wrapper.name;
+        cryptoCurrency.Market_Cap__c = wrapper.quote.USD.market_cap;
+        cryptoCurrency.Price__c = wrapper.quote.USD.price;
+        cryptoCurrency.Volume__c = wrapper.quote.USD.volume_24h;
 
         return cryptoCurrency;
     }
