@@ -1,4 +1,4 @@
-public class CryptoCurrencyModel {
+public class CryptoCurrencyWrapper {
 
     public class Quote {
         public USD USD;

@@ -99,10 +99,10 @@ public with sharing class CryptoCurrencyService {
             else {
                 //Get JSON String of current currency
                 String cryptoCurrencyString = JSON.serialize(cryptoCurrencyJson);
-                CryptoCurrencyModel model;
+                CryptoCurrencyWrapper model;
                 try {
                     //Try to parse it to model
-                    model = CryptoCurrencyModel.parse(cryptoCurrencyString);
+                    model = CryptoCurrencyWrapper.parse(cryptoCurrencyString);
                     cryptoCurrency = fillCryptoCurrencyFromModel(cryptoCurrency, model);
                 }
                 //Pass parse error, if couldn't parse JSON
@@ -137,7 +137,7 @@ public with sharing class CryptoCurrencyService {
         return new Http().send(req);
     }
 
-    private static CryptoCurrency__c fillCryptoCurrencyFromModel(CryptoCurrency__c cryptoCurrency, CryptoCurrencyModel model) {
+    private static CryptoCurrency__c fillCryptoCurrencyFromWrapper(CryptoCurrency__c cryptoCurrency, CryptoCurrencyWrapper model) {
         System.debug(cryptoCurrency.Symbol__c);
         System.debug(model == null);
 
